@@ -41,7 +41,8 @@ export class AuthService {
             email: true,
             name: true, 
             password: true, 
-            isActive: true
+            isActive: true,
+            isVerified: true
            }
        });
 
@@ -49,6 +50,12 @@ export class AuthService {
            logger.warn('Login attempt with non-existent email', { email });
            throw new UnauthorizedError('Invalid email or password');
        }
+
+       // Check if email is verified
+        if (!user.isVerified) {
+        logger.warn('Login attempt for unverified account', { email });
+        throw new UnauthorizedError('Please verify your email address before logging in. Check your inbox for the verification link.');
+        }
 
        // 2. Check if user is active
        if (!user.isActive) {
